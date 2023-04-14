@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/spring_back_application-TaskHero.iml" filepath="$PROJECT_DIR$/.idea/spring_back_application-TaskHero.iml" />
-      <module fileurl="file://$PROJECT_DIR$/spring_back_application-main/un_site_de_planification_et_de_suivi_de_projets.iml" filepath="$PROJECT_DIR$/spring_back_application-main/un_site_de_planification_et_de_suivi_de_projets.iml" />
-    </modules>
-  </component>
-</project>

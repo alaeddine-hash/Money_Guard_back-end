@@ -133,7 +133,6 @@ public  class User implements Serializable {
     public void setMessage_two(Set<Message> message_two) {
         this.message_two = message_two;
     }
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -176,7 +175,7 @@ public  class User implements Serializable {
     public User() {
 
     }
-    @JsonManagedReference
+
     public Set<Role> getRoles() {
         return roles;
     }

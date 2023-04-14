@@ -1,21 +1,36 @@
 package com.project.un_site_de_planification_et_de_suivi_de_projets.controllers;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.un_site_de_planification_et_de_suivi_de_projets.config.FileUploadUtil;
+import com.project.un_site_de_planification_et_de_suivi_de_projets.entities.Image;
 import com.project.un_site_de_planification_et_de_suivi_de_projets.entities.User;
+import com.project.un_site_de_planification_et_de_suivi_de_projets.services.ImageService;
 import com.project.un_site_de_planification_et_de_suivi_de_projets.services.UserService;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/employee")
+@RequestMapping("/api/users")
 public class UserController {
     final
     UserService userService;
 
-    public UserController(UserService userService) {
+    private ImageService imageService;
+    @Autowired
+    public UserController(UserService userService, ImageService imageService) {
+
         this.userService = userService;
+        this.imageService = imageService ;
     }
 
     @PostMapping("/add")
@@ -48,6 +63,39 @@ public class UserController {
     @ResponseBody
     public void supp_user(@PathVariable("id") long id){
         userService.deleteUser(id); }
+
+    @PostMapping("/{sid}/add-image")
+    public void addImage(@PathVariable Long sid, @RequestParam("image") MultipartFile multipartFile) throws IOException {
+
+        User user = userService.findUserById(sid);
+
+        userService.addUser(user);
+        if (!multipartFile.isEmpty()) {
+            String orgFileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+            String ext = orgFileName.substring(orgFileName.lastIndexOf("."));
+            String uploadDir = "users-photos/";
+            String fileName = "user-" + user.getId() + ext;
+            Image img = new Image(multipartFile, fileName, ext, multipartFile.getBytes());
+            Image image = imageService.addImageLa(img);
+            user.setImage(image);
+            FileUploadUtil.saveFile(uploadDir,fileName,multipartFile);
+            userService.updateUser(user);
+        }
+    }
+
+
+
+    @RequestMapping(value = "/{sid}/display-image")
+    public void getUserPhoto(HttpServletResponse response, @PathVariable("sid") long sid) throws Exception {
+        User user = userService.findUserById(sid);
+        Image image = user.getImage();
+
+        if(image != null) {
+            response.setContentType(image.getFileType());
+            InputStream inputStream = new ByteArrayInputStream(image.getData());
+            IOUtils.copy(inputStream, response.getOutputStream());
+        }
+    }
 
 
 }

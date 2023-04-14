@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 
@@ -30,6 +31,17 @@ public class Image {
     @JoinColumn(name="id_solution")
     private Solution solution;
 
+    public Image(String id, String fileName, String fileType, byte[] data) {
+        this.id = id;
+        this.fileName = fileName;
+        this.fileType = fileType;
+        this.data = data;
+    }
 
-
+    public Image(Object o, String fileName, String fileType, byte[] data) {
+        this.id = o.toString();
+        this.fileName = fileName;
+        this.fileType = fileType ;
+        this.data = data;
+    }
 }
