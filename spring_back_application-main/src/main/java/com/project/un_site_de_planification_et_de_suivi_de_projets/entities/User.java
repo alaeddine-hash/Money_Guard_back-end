@@ -42,6 +42,10 @@ public  class User implements Serializable {
     Image image;
 
 
+    @OneToOne
+    Location location;
+
+
     public Long getId() {
         return id;
     }

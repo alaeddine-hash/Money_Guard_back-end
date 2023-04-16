@@ -1,6 +1,7 @@
 package com.project.un_site_de_planification_et_de_suivi_de_projets.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.geo.Point;
 
@@ -22,8 +23,13 @@ public class Location {
     @Column
     private String name;
 
+    @JsonIgnore
     @OneToOne
     Solution solution;
+
+    @JsonIgnore
+    @OneToOne
+    User user;
 
     public Location(double lat, double lng, String address) {
         this.lat = lat;

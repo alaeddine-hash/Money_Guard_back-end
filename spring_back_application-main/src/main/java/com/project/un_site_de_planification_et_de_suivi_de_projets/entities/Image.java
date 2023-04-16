@@ -23,6 +23,7 @@ public class Image {
     @Lob
     private byte[] data;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "image")
     User user;
 
