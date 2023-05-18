@@ -12,7 +12,6 @@ import java.util.List;
 
 @Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class Solution {
     @Id
@@ -26,8 +25,32 @@ public class Solution {
 
 
     @NotBlank
-    @Column(length = 40)
+    @Column(length = 255)
     private String description;
+
+    @Column(length = 40)
+    private String providerUsername = "???";
+
+    public Solution(Long id_solution, String titleSolution, String description, String providerUsername, double price, List<Availability> availabilities, List<Image> images, Location location, Categorie categorie, User provider) {
+        this.id_solution = id_solution;
+        this.titleSolution = titleSolution;
+        this.description = description;
+        this.providerUsername = providerUsername;
+        this.price = price;
+        this.availabilities = availabilities;
+        this.images = images;
+        this.location = location;
+        this.categorie = categorie;
+        this.provider = provider;
+    }
+
+    public String getProviderUsername() {
+        return providerUsername;
+    }
+
+    public void setProviderUsername(String providerUsername) {
+        this.providerUsername = providerUsername;
+    }
 
     @Column(length = 40)
     private double price;
@@ -38,17 +61,15 @@ public class Solution {
     @OneToMany(mappedBy = "solution")
     private List<Image> images ;
 
-    @OneToMany(mappedBy = "solution")
-    private List<Reservation> reservations ;
     @OneToOne(mappedBy = "solution")
     Location location;
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name="sous_categorie_id", nullable=false)
-    private SousCategorie sousCategorie;
+    @JoinColumn(name="categorie_id", nullable=false)
+    private Categorie categorie;
 
-    @JsonIgnore
+   @JsonIgnore
     @ManyToOne
     @JoinColumn(name="provider_id", nullable=false)
     private User provider;
@@ -118,11 +139,22 @@ public class Solution {
         this.images = images;
     }
 
-    public SousCategorie getSousCategorie() {
-        return sousCategorie;
+
+
+
+    public Categorie getCategorie() {
+        return categorie;
     }
 
-    public void setSousCategorie(SousCategorie sousCategorie) {
-        this.sousCategorie = sousCategorie;
+    public void setCategorie(Categorie categorie) {
+        this.categorie = categorie;
+    }
+
+    public User getProvider() {
+        return provider;
+    }
+
+    public void setProvider(User provider) {
+        this.provider = provider;
     }
 }

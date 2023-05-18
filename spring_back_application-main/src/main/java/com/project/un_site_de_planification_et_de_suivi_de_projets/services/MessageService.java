@@ -53,5 +53,13 @@ public class MessageService {
         messageRepository.deleteById(id);
     }
 
+    public List<Message> getMessagesBySenderId(Long id){
+        return messageRepository.getMessagesBySender_Id(id);
+    }
+
+    public List<Message> getMessagesByRecipientId(Long id){
+        return messageRepository.getMessagesByRecipient_id(id);
+    }
+
 
 }

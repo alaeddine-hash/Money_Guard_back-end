@@ -28,6 +28,10 @@ public class Image {
     User user;
 
     @JsonIgnore
+    @OneToOne(mappedBy = "image")
+    Categorie categorie;
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name="id_solution")
     private Solution solution;

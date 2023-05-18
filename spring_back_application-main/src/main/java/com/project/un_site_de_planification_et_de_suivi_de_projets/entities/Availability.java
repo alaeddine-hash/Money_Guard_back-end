@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 
@@ -55,5 +56,15 @@ public class Availability {
     @JoinColumn(name="solution_id")
     private Solution solution;
 
+    @JsonIgnore
+    @OneToMany(mappedBy="availability")
+    private Set<Reservation> reservations;
 
+    public Set<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(Set<Reservation> reservations) {
+        this.reservations = reservations;
+    }
 }

@@ -36,6 +36,9 @@ public class UserDetailsImpl implements UserDetails {
         this.lastname = lastname;
         this.birthday = birthday;
         this.phone = phone;
+        if (username == null || username.isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be null or empty");
+        }
         this.username = username;
         this.email = email;
         this.password = password;

@@ -1,5 +1,6 @@
 package com.project.un_site_de_planification_et_de_suivi_de_projets.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
@@ -7,6 +8,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -137,6 +139,7 @@ public  class User implements Serializable {
     public void setMessage_two(Set<Message> message_two) {
         this.message_two = message_two;
     }
+    @ToString.Exclude
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -156,14 +159,63 @@ public  class User implements Serializable {
     @OneToMany(mappedBy="client")
     private Set<Rating> clientRatings;
 
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public Set<Favorite> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(Set<Favorite> favorites) {
+        this.favorites = favorites;
+    }
+
+    public Set<Rating> getClientRatings() {
+        return clientRatings;
+    }
+
+    public void setClientRatings(Set<Rating> clientRatings) {
+        this.clientRatings = clientRatings;
+    }
+
+    public Set<Rating> getProviderRatings() {
+        return providerRatings;
+    }
+
+    public void setProviderRatings(Set<Rating> providerRatings) {
+        this.providerRatings = providerRatings;
+    }
+
+    public Set<Solution> getSolutions() {
+        return solutions;
+    }
+
+    public void setSolutions(Set<Solution> solutions) {
+        this.solutions = solutions;
+    }
+
+    public Set<Notification> getNotification() {
+        return notifications;
+    }
+
+    public void setNotification(Set<Notification> notifications) {
+        this.notifications = notifications;
+    }
+
     @OneToMany(mappedBy="provider")
     private Set<Rating> providerRatings;
 
-    @OneToMany(mappedBy="client")
-    private Set<Reservation> reservations;
-
     @OneToMany(mappedBy="provider")
     private Set<Solution> solutions;
+
+    @OneToMany(mappedBy = "provider")
+    private Set<Notification> notifications;
+
 
 
     public User(String username, String name, String lastname, LocalDate birthday, String phone, String email, String password ) {

@@ -1,18 +1,21 @@
 package com.project.un_site_de_planification_et_de_suivi_de_projets.controllers;
 
 import com.project.un_site_de_planification_et_de_suivi_de_projets.Security.Jwt.JwtUtils;
-import com.project.un_site_de_planification_et_de_suivi_de_projets.entities.ERole;
-import com.project.un_site_de_planification_et_de_suivi_de_projets.entities.User;
-import com.project.un_site_de_planification_et_de_suivi_de_projets.entities.Role;
+import com.project.un_site_de_planification_et_de_suivi_de_projets.config.FileUploadUtil;
+import com.project.un_site_de_planification_et_de_suivi_de_projets.entities.*;
 import com.project.un_site_de_planification_et_de_suivi_de_projets.payload.request.LoginRequest;
 import com.project.un_site_de_planification_et_de_suivi_de_projets.payload.request.SignupRequest;
 import com.project.un_site_de_planification_et_de_suivi_de_projets.payload.response.MessageResponse;
 import com.project.un_site_de_planification_et_de_suivi_de_projets.payload.response.UserInfoResponse;
 import com.project.un_site_de_planification_et_de_suivi_de_projets.repos.UserRepository;
 import com.project.un_site_de_planification_et_de_suivi_de_projets.repos.RoleRepository;
+import com.project.un_site_de_planification_et_de_suivi_de_projets.services.NotificationService;
+import com.project.un_site_de_planification_et_de_suivi_de_projets.services.ProviderApplicationService;
 import com.project.un_site_de_planification_et_de_suivi_de_projets.services.UserDetailsImpl;
+import com.project.un_site_de_planification_et_de_suivi_de_projets.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,7 +24,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,9 +56,33 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    ProviderApplicationService providerApplicationService;
+
+    @Autowired
+    NotificationService notificationService;
+
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        System.out.println("Incoming username: " + loginRequest.getUsername());
+        System.out.println("Incoming password: " + loginRequest.getPassword());
 
+        User userFromDB = userRepository.findByUsername(loginRequest.getUsername()).orElse(null);
+
+        if (userFromDB != null) {
+            System.out.println("User details from DB - Username: " + userFromDB.getUsername());
+            System.out.println("User details from DB - Password: " + userFromDB.getPassword());
+            String encodedPassword = encoder.encode(loginRequest.getPassword());
+            System.out.println("User encodedPassword from the out - Password: " + encodedPassword);
+            boolean isPasswordMatch = encoder.matches(loginRequest.getPassword(), userFromDB.getPassword());
+            System.out.println(" Passwords is matching : " + isPasswordMatch);
+
+        } else {
+            System.out.println("No user found in DB with username: " + loginRequest.getUsername());
+        }
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -59,6 +91,9 @@ public class AuthController {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+
+        System.out.println("JWT Cookie: " + jwtCookie.toString());
+
 
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
@@ -139,6 +174,83 @@ public class AuthController {
         ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(new MessageResponse("You've been signed out!"));
+    }
+
+    @PostMapping("/provider-application")
+    public ResponseEntity<?> applyAsProvider(@RequestParam("fullName") String fullName,
+                                             @RequestParam("email") String email,
+                                             @RequestParam("phone") String phone,
+                                             @RequestParam("address") String address,
+                                             @RequestParam("password") String password,
+                                             @RequestParam("certificationFile") @Valid @NotNull MultipartFile certificationFile) {
+        try {
+
+            System.out.println(fullName);
+            System.out.println(email);
+            System.out.println(phone);
+            System.out.println(address);
+            System.out.println(password);
+            System.out.println(certificationFile);
+
+            // Validate form data
+            if (fullName.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty()|| password.isEmpty()) {
+                return new ResponseEntity<>("All fields are required.", HttpStatus.BAD_REQUEST);
+            }
+
+            if (certificationFile.isEmpty()) {
+                return new ResponseEntity<>("Certification file is required.", HttpStatus.BAD_REQUEST);
+            }
+
+            // Check if user already exists
+            User existingUser = userService.findUserByEmail(email);
+            if (existingUser != null) {
+                return new ResponseEntity<>("Error: Email is already in use!", HttpStatus.BAD_REQUEST);
+            }
+
+            // Save file to your server
+            String certificationFilePath = FileUploadUtil.saveFile("certifications", certificationFile);
+
+            // Create new user
+
+            User user = new User(fullName,
+                    fullName,
+                    fullName,
+                    LocalDate.now(),
+                    phone,
+                    email,
+                    encoder.encode(password));
+
+            // Assign provider role to user
+            Role providerRole = roleRepository.findByName(ROLE_USER).orElseThrow();
+            Set<Role> roles = new HashSet<>();
+            roles.add(providerRole);
+            user.setRoles(roles);
+
+            // Create and save ProviderApplication
+            ProviderApplication application = new ProviderApplication();
+            application.setName(fullName);
+            application.setEmail(email);
+            application.setPhone(phone);
+            application.setAddress(address);
+            application.setApplicant(user);
+            application.setCertification(certificationFile.getBytes());  // assuming you have set a @Lob field in ProviderApplication for this
+            application.setStatus(ApplicationStatus.PENDING);
+
+            // Save user to DB
+            userRepository.save(user);
+
+            // Save provider application to DB
+            providerApplicationService.apply(application);
+
+            // Create notification
+            String message = "Your provider application has been submitted , wait while our team will respond you soon you are welcome .";
+            notificationService.createNotification(message, user);
+
+            return new ResponseEntity<>("Provider application submitted successfully.", HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace(); // Print the exception stack trace for debugging purposes
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
 

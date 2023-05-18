@@ -44,6 +44,10 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UserNotFoundException("User by id " + id + " was not found"));
     }
 
+    public User findUserByEmail(String email) {
+        return UserRepo.findByEmail(email).orElse(null);
+    }
+
     public void deleteUser(Long id) {
         UserRepo.deleteById(id);
     }

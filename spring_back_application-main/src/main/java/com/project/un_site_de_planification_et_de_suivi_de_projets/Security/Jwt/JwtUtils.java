@@ -28,6 +28,7 @@ public class JwtUtils {
 
     public String getJwtFromCookies(HttpServletRequest request) {
         Cookie cookie = WebUtils.getCookie(request, jwtCookie);
+        logger.info("JWT Cookie: " + (cookie != null ? cookie.getValue() : "Cookie is null"));
         if (cookie != null) {
             return cookie.getValue();
         } else {
@@ -36,7 +37,22 @@ public class JwtUtils {
     }
 
     public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
+        if (userPrincipal == null) {
+            logger.error("User principal is null");
+            return null;
+        }
+
+        logger.info("Generating JWT for user: " + userPrincipal.getUsername());
+
         String jwt = generateTokenFromUsername(userPrincipal.getUsername());
+
+        if (jwt == null) {
+            logger.error("JWT generation failed");
+            return null;
+        }
+
+        logger.info("Generated JWT: " + jwt);
+
         ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/api").maxAge(24 * 60 * 60).httpOnly(true).build();
         return cookie;
     }
@@ -70,11 +86,25 @@ public class JwtUtils {
     }
 
     public String generateTokenFromUsername(String username) {
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
-                .compact();
+        if (username == null || username.isEmpty()) {
+            logger.error("Username is null or empty");
+            return null;
+        }
+
+        String token = null;
+
+        try {
+            token = Jwts.builder()
+                    .setSubject(username)
+                    .setIssuedAt(new Date())
+                    .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                    .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                    .compact();
+        } catch (Exception e) {
+            logger.error("Error generating JWT: ", e);
+        }
+
+        return token;
     }
 }
+

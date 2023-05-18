@@ -26,8 +26,8 @@ public class Favorite {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name="sous_categorie_id", nullable=false)
-    private SousCategorie sousCategorie;
+    @JoinColumn(name="categorie_id", nullable=false)
+    private Categorie categorie;
 
     @JsonIgnore
     @ManyToOne

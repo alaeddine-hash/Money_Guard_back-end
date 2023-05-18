@@ -5,17 +5,20 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
-
+@CrossOrigin(origins = "http://localhost:4200")
 @SpringBootApplication
-public class UnSiteDePlanificationEtDeSuiviDeProjetsApplication {
+public class TaskHero implements WebMvcConfigurer {
 
 	public static void main(String[] args) {
-		SpringApplication.run(UnSiteDePlanificationEtDeSuiviDeProjetsApplication.class, args);
+		SpringApplication.run(TaskHero.class, args);
 	}
 	//	@Autowired
 //	private EmailSenderService senderService ;
@@ -50,4 +53,8 @@ public class UnSiteDePlanificationEtDeSuiviDeProjetsApplication {
 		return new BCryptPasswordEncoder();
 	}
 
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+	}
 }

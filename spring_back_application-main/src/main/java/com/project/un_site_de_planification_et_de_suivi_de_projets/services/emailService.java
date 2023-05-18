@@ -1,16 +1,19 @@
 package com.project.un_site_de_planification_et_de_suivi_de_projets.services;
 
 import com.project.un_site_de_planification_et_de_suivi_de_projets.entities.EmailDetails;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
 public class emailService {
-    @Autowired private JavaMailSender javaMailSender;
+    private final  JavaMailSender javaMailSender;
 
      private String sender = "alaeddinemansouri2@gmail.com";
+
+    public emailService(JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
+    }
 
     // Method
     // To send a simple email

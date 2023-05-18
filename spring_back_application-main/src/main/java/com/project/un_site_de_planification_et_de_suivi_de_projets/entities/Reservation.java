@@ -37,6 +37,6 @@ public class Reservation {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name="id_solution", nullable=false)
-    private Solution solution;
+    @JoinColumn(name="id_availability", nullable=false)
+    private Availability availability;
 }
