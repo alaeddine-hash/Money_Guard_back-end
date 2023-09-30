@@ -29,12 +29,10 @@ public class Image {
 
     @JsonIgnore
     @OneToOne(mappedBy = "image")
-    Categorie categorie;
+    Category category;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name="id_solution")
-    private Solution solution;
+
+
 
     public Image(String id, String fileName, String fileType, byte[] data) {
         this.id = id;

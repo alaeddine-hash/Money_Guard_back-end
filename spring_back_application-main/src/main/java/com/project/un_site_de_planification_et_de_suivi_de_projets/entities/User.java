@@ -1,14 +1,12 @@
 package com.project.un_site_de_planification_et_de_suivi_de_projets.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -42,11 +40,6 @@ public  class User implements Serializable {
 
     @OneToOne
     Image image;
-
-
-    @OneToOne
-    Location location;
-
 
     public Long getId() {
         return id;
@@ -153,52 +146,6 @@ public  class User implements Serializable {
     @OneToMany(mappedBy="recipient")
     private Set<Message> message_two;
 
-    @OneToMany(mappedBy="client")
-    private Set<Favorite> favorites;
-
-    @OneToMany(mappedBy="client")
-    private Set<Rating> clientRatings;
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
-    public Set<Favorite> getFavorites() {
-        return favorites;
-    }
-
-    public void setFavorites(Set<Favorite> favorites) {
-        this.favorites = favorites;
-    }
-
-    public Set<Rating> getClientRatings() {
-        return clientRatings;
-    }
-
-    public void setClientRatings(Set<Rating> clientRatings) {
-        this.clientRatings = clientRatings;
-    }
-
-    public Set<Rating> getProviderRatings() {
-        return providerRatings;
-    }
-
-    public void setProviderRatings(Set<Rating> providerRatings) {
-        this.providerRatings = providerRatings;
-    }
-
-    public Set<Solution> getSolutions() {
-        return solutions;
-    }
-
-    public void setSolutions(Set<Solution> solutions) {
-        this.solutions = solutions;
-    }
-
     public Set<Notification> getNotification() {
         return notifications;
     }
@@ -207,14 +154,16 @@ public  class User implements Serializable {
         this.notifications = notifications;
     }
 
-    @OneToMany(mappedBy="provider")
-    private Set<Rating> providerRatings;
 
-    @OneToMany(mappedBy="provider")
-    private Set<Solution> solutions;
 
-    @OneToMany(mappedBy = "provider")
+    @OneToMany(mappedBy = "user")
     private Set<Notification> notifications;
+
+    @OneToMany(mappedBy="user")
+    private Set<Dispense> dispenses;
+
+    @OneToMany(mappedBy="user")
+    private Set<BudgetAlert> budgetAlerts;
 
 
 
@@ -234,5 +183,41 @@ public  class User implements Serializable {
 
     public Set<Role> getRoles() {
         return roles;
+    }
+
+    public Set<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(Set<Notification> notifications) {
+        this.notifications = notifications;
+    }
+
+    public Set<Dispense> getDispenses() {
+        return dispenses;
+    }
+
+    public void setDispenses(Set<Dispense> dispenses) {
+        this.dispenses = dispenses;
+    }
+
+    public Set<BudgetAlert> getBudgetAlerts() {
+        return budgetAlerts;
+    }
+
+    public void setBudgetAlerts(Set<BudgetAlert> budgetAlerts) {
+        this.budgetAlerts = budgetAlerts;
+    }
+
+    @JsonIgnore
+    @OneToOne
+    Budget budget;
+
+    public Budget getBudget() {
+        return budget;
+    }
+
+    public void setBudget(Budget budget) {
+        this.budget = budget;
     }
 }

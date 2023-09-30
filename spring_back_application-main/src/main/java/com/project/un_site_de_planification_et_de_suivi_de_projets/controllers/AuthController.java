@@ -10,7 +10,6 @@ import com.project.un_site_de_planification_et_de_suivi_de_projets.payload.respo
 import com.project.un_site_de_planification_et_de_suivi_de_projets.repos.UserRepository;
 import com.project.un_site_de_planification_et_de_suivi_de_projets.repos.RoleRepository;
 import com.project.un_site_de_planification_et_de_suivi_de_projets.services.NotificationService;
-import com.project.un_site_de_planification_et_de_suivi_de_projets.services.ProviderApplicationService;
 import com.project.un_site_de_planification_et_de_suivi_de_projets.services.UserDetailsImpl;
 import com.project.un_site_de_planification_et_de_suivi_de_projets.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,8 +58,6 @@ public class AuthController {
     @Autowired
     UserService userService;
 
-    @Autowired
-    ProviderApplicationService providerApplicationService;
 
     @Autowired
     NotificationService notificationService;
@@ -144,16 +141,10 @@ public class AuthController {
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(adminRole);
                         break;
-                    case "provider":
-                        Role providerRole = roleRepository.findByName(ROLE_PROVIDER)
+                    case "financial_advisor":
+                        Role providerRole = roleRepository.findByName(ROLE_Financial)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(providerRole);
-                        break;
-                    case "assistant":
-                        Role assistantRole = roleRepository.findByName(ROLE_ASSISTANT)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(assistantRole);
-
                         break;
                     default:
                         Role userRole = roleRepository.findByName(ROLE_USER)
@@ -176,81 +167,6 @@ public class AuthController {
                 .body(new MessageResponse("You've been signed out!"));
     }
 
-    @PostMapping("/provider-application")
-    public ResponseEntity<?> applyAsProvider(@RequestParam("fullName") String fullName,
-                                             @RequestParam("email") String email,
-                                             @RequestParam("phone") String phone,
-                                             @RequestParam("address") String address,
-                                             @RequestParam("password") String password,
-                                             @RequestParam("certificationFile") @Valid @NotNull MultipartFile certificationFile) {
-        try {
 
-            System.out.println(fullName);
-            System.out.println(email);
-            System.out.println(phone);
-            System.out.println(address);
-            System.out.println(password);
-            System.out.println(certificationFile);
-
-            // Validate form data
-            if (fullName.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty()|| password.isEmpty()) {
-                return new ResponseEntity<>("All fields are required.", HttpStatus.BAD_REQUEST);
-            }
-
-            if (certificationFile.isEmpty()) {
-                return new ResponseEntity<>("Certification file is required.", HttpStatus.BAD_REQUEST);
-            }
-
-            // Check if user already exists
-            User existingUser = userService.findUserByEmail(email);
-            if (existingUser != null) {
-                return new ResponseEntity<>("Error: Email is already in use!", HttpStatus.BAD_REQUEST);
-            }
-
-            // Save file to your server
-            String certificationFilePath = FileUploadUtil.saveFile("certifications", certificationFile);
-
-            // Create new user
-
-            User user = new User(fullName,
-                    fullName,
-                    fullName,
-                    LocalDate.now(),
-                    phone,
-                    email,
-                    encoder.encode(password));
-
-            // Assign provider role to user
-            Role providerRole = roleRepository.findByName(ROLE_USER).orElseThrow();
-            Set<Role> roles = new HashSet<>();
-            roles.add(providerRole);
-            user.setRoles(roles);
-
-            // Create and save ProviderApplication
-            ProviderApplication application = new ProviderApplication();
-            application.setName(fullName);
-            application.setEmail(email);
-            application.setPhone(phone);
-            application.setAddress(address);
-            application.setApplicant(user);
-            application.setCertification(certificationFile.getBytes());  // assuming you have set a @Lob field in ProviderApplication for this
-            application.setStatus(ApplicationStatus.PENDING);
-
-            // Save user to DB
-            userRepository.save(user);
-
-            // Save provider application to DB
-            providerApplicationService.apply(application);
-
-            // Create notification
-            String message = "Your provider application has been submitted , wait while our team will respond you soon you are welcome .";
-            notificationService.createNotification(message, user);
-
-            return new ResponseEntity<>("Provider application submitted successfully.", HttpStatus.OK);
-        } catch (IOException e) {
-            e.printStackTrace(); // Print the exception stack trace for debugging purposes
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 }
 

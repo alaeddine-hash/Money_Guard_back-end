@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.project</groupId>
-	<artifactId>TaskHero</artifactId>
+	<artifactId>MoneyGuard</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>TaskHero</name>
-	<description>Task Hero application</description>
+	<name>MoneyGuard</name>
+	<description>MoneyGuard application</description>
 	<properties>
 		<java.version>18</java.version>
 	</properties>
@@ -97,7 +97,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<finalName>site_de_planification</finalName>
+		<finalName>MoneyGuard</finalName>
 	</build>
 
 </project>

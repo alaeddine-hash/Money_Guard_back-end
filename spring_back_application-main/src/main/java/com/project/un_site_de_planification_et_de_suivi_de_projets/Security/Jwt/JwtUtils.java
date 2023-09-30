@@ -17,13 +17,13 @@ import java.util.Date;
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    @Value("${employeemanager.app.jwtSecret}")
+    @Value("${moneyGuard.app.jwtSecret}")
     private String jwtSecret;
 
-    @Value("${employeemanager.app.jwtExpirationMs}")
+    @Value("${moneyGuard.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
-    @Value("${employeemanager.app.jwtCookieName}")
+    @Value("${moneyGuard.app.jwtCookieName}")
     private String jwtCookie;
 
     public String getJwtFromCookies(HttpServletRequest request) {

@@ -36,15 +36,15 @@ public class Notification {
     }
 
     public User getProvider() {
-        return provider;
+        return user;
     }
 
     public void setProvider(User provider) {
-        this.provider = provider;
+        this.user = provider;
     }
     @ToString.Exclude
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User provider;
+    private User user;
 }

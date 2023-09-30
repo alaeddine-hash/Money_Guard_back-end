@@ -15,10 +15,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.Arrays;
 @CrossOrigin(origins = "http://localhost:4200")
 @SpringBootApplication
-public class TaskHero implements WebMvcConfigurer {
+public class MoneyGuard implements WebMvcConfigurer {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TaskHero.class, args);
+		SpringApplication.run(MoneyGuard.class, args);
 	}
 	//	@Autowired
 //	private EmailSenderService senderService ;

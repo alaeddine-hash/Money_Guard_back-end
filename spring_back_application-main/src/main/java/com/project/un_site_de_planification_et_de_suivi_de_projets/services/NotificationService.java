@@ -24,7 +24,7 @@ public class NotificationService {
     }
 
     public List<Notification> getNotificationsForProvider(Long providerId) {
-        return notificationRepository.findByProviderId(providerId);
+        return notificationRepository.findByUserId(providerId);
     }
 
     public List<Notification> getAllNotifications() {
