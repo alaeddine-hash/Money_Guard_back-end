@@ -3,6 +3,7 @@ package com.project.un_site_de_planification_et_de_suivi_de_projets.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,13 +21,13 @@ public class Budget {
 
     private double amount;
     private Period period;
-    private LocalDateTime startDate;
-    private LocalDateTime creationDate;
+    private LocalDate startDate;
+    private LocalDate creationDate;
 
     @OneToOne
     User user;
 
-    public Budget(Long id, double amount, Period period, LocalDateTime startDate, LocalDateTime creationDate) {
+    public Budget(Long id, double amount, Period period, LocalDate startDate, LocalDate creationDate) {
         this.id = id;
         this.amount = amount;
         this.period = period;
@@ -58,19 +59,19 @@ public class Budget {
         this.period = period;
     }
 
-    public LocalDateTime getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDateTime startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDateTime getCreationDate() {
+    public LocalDate getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
     }
 

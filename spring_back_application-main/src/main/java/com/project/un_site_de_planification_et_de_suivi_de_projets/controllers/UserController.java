@@ -95,7 +95,7 @@ public class UserController {
         if (!multipartFile.isEmpty()) {
             String orgFileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
             String ext = orgFileName.substring(orgFileName.lastIndexOf("."));
-            String uploadDir = "users-photos/";
+            String uploadDir = "/src/main/resources/users-photos/";
             String fileName = "user-" + user.getId() + ext;
             Image img = new Image(multipartFile, fileName, ext, multipartFile.getBytes());
             Image image = imageService.addImageLa(img);

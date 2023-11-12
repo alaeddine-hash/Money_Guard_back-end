@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -160,10 +161,10 @@ public  class User implements Serializable {
     private Set<Notification> notifications;
 
     @OneToMany(mappedBy="user")
-    private Set<Dispense> dispenses;
+    private List<Dispense> dispenses;
 
     @OneToMany(mappedBy="user")
-    private Set<BudgetAlert> budgetAlerts;
+    private List<BudgetAlert> budgetAlerts;
 
 
 
@@ -193,19 +194,19 @@ public  class User implements Serializable {
         this.notifications = notifications;
     }
 
-    public Set<Dispense> getDispenses() {
+    public List<Dispense> getDispenses() {
         return dispenses;
     }
 
-    public void setDispenses(Set<Dispense> dispenses) {
+    public void setDispenses(List<Dispense> dispenses) {
         this.dispenses = dispenses;
     }
 
-    public Set<BudgetAlert> getBudgetAlerts() {
+    public List<BudgetAlert> getBudgetAlerts() {
         return budgetAlerts;
     }
 
-    public void setBudgetAlerts(Set<BudgetAlert> budgetAlerts) {
+    public void setBudgetAlerts(List<BudgetAlert> budgetAlerts) {
         this.budgetAlerts = budgetAlerts;
     }
 

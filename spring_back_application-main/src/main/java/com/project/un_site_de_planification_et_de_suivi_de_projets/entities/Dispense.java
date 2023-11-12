@@ -7,6 +7,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,10 +22,11 @@ public class Dispense {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private double amount;
-    private LocalDateTime date;
+    private float amount;
+    private LocalDate date;
     private String description;
     private PaymentMethod paymentMethod;
+
 
     @ToString.Exclude
     @JsonIgnore
@@ -48,13 +51,15 @@ public class Dispense {
     public Dispense() {
     }
 
-    public Dispense(Long id, double amount, LocalDateTime date, String description, PaymentMethod paymentMethod) {
+    public Dispense(Long id, float amount, LocalDate date, String description, PaymentMethod paymentMethod) {
         this.id = id;
         this.amount = amount;
         this.date = date;
         this.description = description;
         this.paymentMethod = paymentMethod;
     }
+
+
 
     public Long getId() {
         return id;
@@ -64,19 +69,19 @@ public class Dispense {
         this.id = id;
     }
 
-    public double getAmount() {
+    public float getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(float amount) {
         this.amount = amount;
     }
 
-    public LocalDateTime getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

@@ -20,7 +20,7 @@ public class ImageController {
     public ResponseEntity<Resource> getImage(@PathVariable String filename) {
         try {
             // Replace this with the actual path to your images folder
-            Path imagePath = Paths.get("src/main/resources/static/categories-photos", filename);
+            Path imagePath = Paths.get("/src/main/resources/users-photos", filename);
             Resource imageResource = (Resource) new UrlResource(imagePath.toUri());
             if (imageResource.exists() || imageResource.isReadable()) {
                 return ResponseEntity.ok()
