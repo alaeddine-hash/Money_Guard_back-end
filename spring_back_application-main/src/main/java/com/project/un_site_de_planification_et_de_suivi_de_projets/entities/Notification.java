@@ -1,9 +1,12 @@
 package com.project.un_site_de_planification_et_de_suivi_de_projets.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "notifications")
@@ -12,7 +15,8 @@ import javax.persistence.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class Notification {
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+public class Notification implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -35,14 +39,14 @@ public class Notification {
         this.message = message;
     }
 
-    public User getProvider() {
+    public User getUser() {
         return user;
     }
 
-    public void setProvider(User provider) {
-        this.user = provider;
+    public void setProvider(User user) {
+        this.user = user;
     }
-    @ToString.Exclude
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")

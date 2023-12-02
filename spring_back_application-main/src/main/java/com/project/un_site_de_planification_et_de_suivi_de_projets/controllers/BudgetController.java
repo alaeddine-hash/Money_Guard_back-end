@@ -81,7 +81,7 @@ public class BudgetController {
         Budget newBudget = budgetService.addBudget(budgetobj);
         user.setBudget(newBudget);
         user = userService.updateUser(user);
-        if (user == null) {
+        if (user != null) {
             return ResponseEntity.ok("Budget added successfully");
         }
         else {

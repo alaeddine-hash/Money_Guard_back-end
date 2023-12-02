@@ -1,6 +1,8 @@
 package com.project.un_site_de_planification_et_de_suivi_de_projets.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,6 +18,7 @@ import java.util.Set;
 @Getter
 @ToString
 @AllArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public  class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +42,7 @@ public  class User implements Serializable {
     //  @Column(nullable = false)
     private String password ;
 
+    @JsonIgnore
     @OneToOne
     Image image;
 
@@ -118,20 +122,20 @@ public  class User implements Serializable {
         this.roles = roles;
     }
 
-    public Set<Message> getMessage_one() {
-        return message_one;
+    public Set<Message> getSentMessages() {
+        return sentMessages;
     }
 
-    public void setMessage_one(Set<Message> message_one) {
-        this.message_one = message_one;
+    public void setSentMessages(Set<Message> message_one) {
+        this.sentMessages = message_one;
     }
 
-    public Set<Message> getMessage_two() {
-        return message_two;
+    public Set<Message> getReceivedMessages() {
+        return receivedMessages;
     }
 
-    public void setMessage_two(Set<Message> message_two) {
-        this.message_two = message_two;
+    public void setReceivedMessages(Set<Message> message_two) {
+        this.receivedMessages = message_two;
     }
     @ToString.Exclude
     @ManyToMany(fetch = FetchType.LAZY)
@@ -142,10 +146,10 @@ public  class User implements Serializable {
 
 
     @OneToMany(mappedBy="sender")
-    private Set<Message> message_one;
+    private Set<Message> sentMessages;
 
     @OneToMany(mappedBy="recipient")
-    private Set<Message> message_two;
+    private Set<Message> receivedMessages;
 
     public Set<Notification> getNotification() {
         return notifications;
@@ -156,13 +160,18 @@ public  class User implements Serializable {
     }
 
 
-
+    @ToString.Exclude
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<Notification> notifications;
 
+    @ToString.Exclude
+    @JsonIgnore
     @OneToMany(mappedBy="user")
     private List<Dispense> dispenses;
 
+    @ToString.Exclude
+    @JsonIgnore
     @OneToMany(mappedBy="user")
     private List<BudgetAlert> budgetAlerts;
 
@@ -210,6 +219,7 @@ public  class User implements Serializable {
         this.budgetAlerts = budgetAlerts;
     }
 
+    @ToString.Exclude
     @JsonIgnore
     @OneToOne
     Budget budget;

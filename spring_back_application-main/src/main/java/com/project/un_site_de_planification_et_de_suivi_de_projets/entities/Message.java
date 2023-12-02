@@ -1,10 +1,13 @@
 package com.project.un_site_de_planification_et_de_suivi_de_projets.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "messages")
@@ -13,7 +16,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-//@JsonIdentityInfo(property = "msg_id", generator = ObjectIdGenerators.IntSequenceGenerator.class)
+@JsonIdentityInfo(property = "msg_id", generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class Message {
 
     @Id
@@ -22,7 +25,7 @@ public class Message {
     private  long msg_id;
 
     private String object ;
-    private LocalDate date;
+    private LocalDateTime date;
 
     @JsonIgnore
     @ManyToOne
@@ -33,4 +36,11 @@ public class Message {
     @ManyToOne
     @JoinColumn(name="recipient_id", nullable=false)
     private User recipient;
+
+    public Message(String object, LocalDateTime date, User sender, User recipient) {
+        this.object = object;
+        this.date = date;
+        this.sender = sender;
+        this.recipient = recipient;
+    }
 }
